@@ -1,0 +1,29 @@
+# This is a sample Python script.
+
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import math as m
+bounders = [1.5, 2]
+
+
+def function(x):
+    return 3 * m.pow(5 - x, 4 / 3) + 2 * x * x
+def X1(a,b):
+    return a + (3 - m.sqrt(5))/2*(b - a)
+
+def X2(a,b):
+    return a + (m.sqrt(5)-1) / 2 * (b - a)
+
+def GoldenRatioMethod():
+    a = bounders[0]
+    b = bounders[1]
+    Epsilon = m.pow(10,-6)
+    while(m.fabs(a-b) > Epsilon):
+        if function(X1(a,b)) < function(X2(a,b)):
+            b= X2(a,b)
+        else:
+            a= X1(a, b)
+    return a;
+
+if __name__ == "__main__":
+    print (GoldenRatioMethod())
