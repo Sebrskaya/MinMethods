@@ -1,29 +1,144 @@
-# This is a sample Python script.
+using System;
+using System.Drawing;
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import math as m
-bounders = [1.5, 2]
+public class MinimizationMethods
+{
+    public double LowerEdge = 1.5;
+    public double UpperEdge = 2.0;
+    public double Error = Math.Pow(10, -6);
+    public double h = Math.Pow(10, -6);
+
+    //функция
+    public double Function(double x)
+    {
+        return 3 * Math.Pow(5 - x, 4.0 / 3.0) + 2 * x * x;
+    }
+
+    //первая производная
+    public double DivFunction(double x)
+    {
+        return (Function(x + h) - Function(x - h)) / (2 * h);
+    }
+
+    //вторая производная
+    public double SecondDivFunction(double x)
+    {
+        return (DivFunction(x + h) - DivFunction(x - h)) / (2 * h);
+    }
+
+    //счётчик
+    public int count = 0;
+    
+    public double a, b;
+
+    
+    // Золотое сечение ----------------------------------------------------------------------
+    public double GoldenRatio()
+    {
+        count = 0;
+        a = LowerEdge;
+        b = UpperEdge;
+
+        while (Math.Abs(X1GR(a, b) - X2GR(a, b)) > Error)
+        {
+            if (Function(X1GR(a, b)) < Function(X2GR(a, b)))
+            {
+                b = X2GR(a, b);
+            }
+            else
+            {
+                a = X1GR(a, b);
+            }
+            count++;
+        }
+        return (a + b) / 2;
+    }
 
 
-def function(x):
-    return 3 * m.pow(5 - x, 4 / 3) + 2 * x * x
-def X1(a,b):
-    return a + (3 - m.sqrt(5))/2*(b - a)
+    //определение точек для золотого сечения
+    public double X1GR(double a, double b) { return a + (3 - Math.Sqrt(5)) / 2 * (b - a); }
+    public double X2GR(double a, double b) { return a + (Math.Sqrt(5) - 1) / 2 * (b - a); }
 
-def X2(a,b):
-    return a + (m.sqrt(5)-1) / 2 * (b - a)
+    // Метод касательных -------------------------------------------------------------
 
-def GoldenRatioMethod():
-    a = bounders[0]
-    b = bounders[1]
-    Epsilon = m.pow(10,-6)
-    while(m.fabs(a-b) > Epsilon):
-        if function(X1(a,b)) < function(X2(a,b)):
-            b= X2(a,b)
-        else:
-            a= X1(a, b)
-    return a;
+    public double LineMethod()
+    {
+        count = 0;
+        a = LowerEdge;
+        b = UpperEdge;
+        int maxIterations = 1000;
 
-if __name__ == "__main__":
-    print (GoldenRatioMethod())
+        // В этой точке строится касательная
+        double xNew = Intersection(a, b);
+
+        double xOld = 0;
+        while (maxIterations > 0)
+        {
+            // Точка пересечения слева
+            double xL = Intersection(a, xNew);
+
+            // Точка пересечения справа
+            double xR = Intersection(b, xNew);
+
+            xOld = xNew;
+
+            // Определение новых координат
+            if (DivFunction(xNew) < 0)
+            {
+                a = xL;
+                xNew = xR;
+            }
+            else
+            {
+                b = xR;
+                xNew = xL;
+            }
+
+            count++;
+
+            // Условие остановки цикла
+            if (DivFunction(xOld) * (xOld - xNew) < Error)
+                break;
+
+            maxIterations--;
+        }
+
+        return xNew;
+    }
+
+    // Вычисление точки пересечения
+    public double Intersection(double a, double b)
+    {
+        return (Function(b) - Function(a) + DivFunction(a) * a - DivFunction(b) * b) / (DivFunction(a) - DivFunction(b));
+    }
+
+    //Метод Ньютона (Парабол)----------------------------------------------------------
+    
+    public double ParabolicNewton()
+    {
+        count = 0;
+        a = LowerEdge;
+        b = UpperEdge;
+        double x0 = a;
+        double x1 = b;
+        while (Math.Abs(x1-x0)>Error & Math.Abs(Function(x1) - Function(x0)) > Error)
+        {
+            x1 = x0;
+            x0 = x0 - (DivFunction(x0)/SecondDivFunction(x0));
+            count++;
+        }
+
+        return x0;
+    }
+    //-------------------------------------------------------------------------------
+    static void Main()
+    {
+        MinimizationMethods program = new MinimizationMethods();
+        Console.WriteLine("Золотое сечение: " + program.GoldenRatio());
+        Console.WriteLine(program.count);
+        Console.WriteLine("Метод касательных: " + program.LineMethod());
+        Console.WriteLine(program.count);
+        Console.WriteLine("Метод Ньютона: " + program.ParabolicNewton());
+        Console.WriteLine(program.count);
+    }
+}
