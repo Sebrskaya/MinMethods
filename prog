@@ -28,10 +28,10 @@ public class MinimizationMethods
 
     //счётчик
     public int count = 0;
-    
+
     public double a, b;
 
-    
+
     // Золотое сечение ----------------------------------------------------------------------
     public double GoldenRatio()
     {
@@ -113,7 +113,7 @@ public class MinimizationMethods
     }
 
     //Метод Ньютона (Парабол)----------------------------------------------------------
-    
+
     public double ParabolicNewton()
     {
         count = 0;
@@ -121,10 +121,10 @@ public class MinimizationMethods
         b = UpperEdge;
         double x0 = a;
         double x1 = b;
-        while (Math.Abs(x1-x0)>Error & Math.Abs(Function(x1) - Function(x0)) > Error)
+        while (Math.Abs(x1 - x0) > Error & Math.Abs(Function(x1) - Function(x0)) > Error)
         {
             x1 = x0;
-            x0 = x0 - (DivFunction(x0)/SecondDivFunction(x0));
+            x0 = x0 - (DivFunction(x0) / SecondDivFunction(x0));
             count++;
         }
 
@@ -135,10 +135,15 @@ public class MinimizationMethods
     {
         MinimizationMethods program = new MinimizationMethods();
         Console.WriteLine("Золотое сечение: " + program.GoldenRatio());
-        Console.WriteLine(program.count);
+        Console.WriteLine("Итерации: " + program.count);
+        Console.WriteLine("Функция: " + program.Function(program.GoldenRatio()));
+        Console.WriteLine();
         Console.WriteLine("Метод касательных: " + program.LineMethod());
-        Console.WriteLine(program.count);
+        Console.WriteLine("Итерации: " + program.count);
+        Console.WriteLine("Функция: " + program.Function(program.LineMethod()));
+        Console.WriteLine();
         Console.WriteLine("Метод Ньютона: " + program.ParabolicNewton());
-        Console.WriteLine(program.count);
+        Console.WriteLine("Итерации: " + program.count);
+        Console.WriteLine("Функция: " + program.Function(program.ParabolicNewton()));
     }
 }
